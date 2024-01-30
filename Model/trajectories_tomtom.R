@@ -46,20 +46,21 @@ trajectories_tomtom <- function(origin,dest,mode,hour_trajectory=hour,key){
                        # --- Arrival and departure time --
                        departureTime= resp_json[["routes"]][["legs"]][[j]][["summary"]][["departureTime"]],
                        arrivalTime= resp_json[["routes"]][["legs"]][[j]][["summary"]][["arrivalTime"]],
-                       # --   Distance  ---
-                       lengthInMeters = (resp_json[["routes"]][["legs"]][[j]][["summary"]][["lengthInMeters"]]/1000),
-                       trafficLengthInMeters=resp_json[["routes"]][["legs"]][[j]][["summary"]][["trafficLengthInMeters"]],
+                       # --   Distance  --- 
+                       lengthInKM = (resp_json[["routes"]][["legs"]][[j]][["summary"]][["lengthInMeters"]]/1000),
+                       trafficLengthInKM= (resp_json[["routes"]][["legs"]][[j]][["summary"]][["trafficLengthInMeters"]]/1000),
                        travelMode=resp_json[["routes"]][["sections"]][[1]][["travelMode"]][1],
-                       # --- Delay Time
-                       trafficDelayInSeconds=resp_json[["routes"]][["legs"]][[j]][["summary"]][["trafficDelayInSeconds"]],
+                       # --- Delay Time 
+                       trafficDelayInMinutes= round((resp_json[["routes"]][["legs"]][[j]][["summary"]][["trafficDelayInSeconds"]]/60),2),
                        
-                       # ---  Real Time with traffic ---
-                       travelTimeInSeconds = round((resp_json[["routes"]][["legs"]][[j]][["summary"]][["travelTimeInSeconds"]]/60),2),
-                       liveTrafficIncidentsTravelTimeInSeconds=round((resp_json[["routes"]][["legs"]][[j]][["summary"]][["liveTrafficIncidentsTravelTimeInSeconds"]]/60),2),
-                       # ---  Historic Traffic time  ---
-                       historicTrafficTravelTimeInSeconds=round((resp_json[["routes"]][["legs"]][[j]][["summary"]][["historicTrafficTravelTimeInSeconds"]]/60),2),
-                       #   ---  Time without traffic  ---
-                       noTrafficTravelTimeInSeconds= round((resp_json[["routes"]][["legs"]][[j]][["summary"]][["noTrafficTravelTimeInSeconds"]]/60),2),
+                       # ---  Real Time with traffic ---   
+                       
+                       travelTimeInMinutes = round((resp_json[["routes"]][["legs"]][[j]][["summary"]][["travelTimeInSeconds"]]/60),2),
+                       liveTrafficIncidentsTravelTimeInMinutes=round((resp_json[["routes"]][["legs"]][[j]][["summary"]][["liveTrafficIncidentsTravelTimeInSeconds"]]/60),2),
+                       # ---  Historic Traffic time  --- 
+                       historicTrafficTravelTimeInMinutes=round((resp_json[["routes"]][["legs"]][[j]][["summary"]][["historicTrafficTravelTimeInSeconds"]]/60),2),
+                       #   ---  Time without traffic  --- 
+                       noTrafficTravelTimeInMinutes= round((resp_json[["routes"]][["legs"]][[j]][["summary"]][["noTrafficTravelTimeInSeconds"]]/60),2),
                        alternative = paste("alternative_",j,sep=""))
     
     num_rows<-  nrow(resp)
@@ -71,12 +72,12 @@ trajectories_tomtom <- function(origin,dest,mode,hour_trajectory=hour,key){
   
   df_rbind_output<- rbind(df_rbind,df_rbind_output)  
   names(df_rbind_output) <- c("ID" , "long","lat" ,"departureTime", 
-                              "arrivalTime", "lengthInMeters", 
-                              "trafficLengthInMeters","travelMode", 
-                              "trafficDelayInSeconds","travelTimeInSeconds" ,                   
-                              "liveTrafficIncidentsTravelTimeInSeconds",
-                              "historicTrafficTravelTimeInSeconds",
-                              "noTrafficTravelTimeInSeconds",           
+                              "arrivalTime", "lengthInKM", 
+                              "trafficLengthInKM","travelMode", 
+                              "trafficDelayInMinutes","travelTimeInMinutes" ,                   
+                              "liveTrafficIncidentsTravelTimeInMinutes",
+                              "historicTrafficTravelTimeInMinutes",
+                              "noTrafficTravelTimeInMinutes",           
                               "alternative")
   return(df_rbind_output)
 }

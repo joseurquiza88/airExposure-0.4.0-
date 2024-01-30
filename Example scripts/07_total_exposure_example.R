@@ -47,7 +47,7 @@ test_df <- total_exposure (travel_list, mode, dir,key,selection,output_exp="df",
 write.csv(test_df,"example_df.csv") 
 # output plot 
 test_plot <- total_exposure (travel_list, mode, dir,key,selection,output_exp="plot",departure_time_home, activity_minutes,pollutant,shapeValue ,gridID,units)
-htmlwidgets::saveWidget(test_plot , "example_plot.html") 
+htmlwidgets::saveWidget(test_plot , "example_plots.html") 
 
 # output polyline
 test_polyline <- total_exposure (travel_list, mode, dir,key,selection,output_exp="polyline",departure_time_home, activity_minutes,pollutant,shapeValue ,gridID,units)

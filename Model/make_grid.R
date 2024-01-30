@@ -18,13 +18,13 @@ make_grid <- function(ymin,ymax,xmin,xmax, pixelSize,Dir, date, values=NULL){
   
   # Grid Generation
   # Defining spatial boundaries.Creating a 'bbox' object
-  bbox <- st_bbox(c(xmin = xmin, ymin= ymin, xmax= xmax, ymax = ymax),crs = st_crs(4326))
+  bbox <- sf::st_bbox(c(xmin = xmin, ymin= ymin, xmax= xmax, ymax = ymax),crs = st_crs(4326))
   
   # Defining the grid resolution (in degrees)
   res <- degree_longitud
   
   # Creating 24 polygon grids
-  grid <- st_make_grid(bbox, cellsize = c(res, res), what = "polygons")
+  grid <- sf::st_make_grid(bbox, cellsize = c(res, res), what = "polygons")
     
   ID <- c(1:length(grid))
   # grid <- cbind(c(1:length(grid)) , grid) 
@@ -32,7 +32,7 @@ make_grid <- function(ymin,ymax,xmin,xmax, pixelSize,Dir, date, values=NULL){
     print(i)
     random_values <- sample(0:500, length(grid), replace = TRUE)
     
-    sfc_polygon_values<- st_sf(ID,random_values, geometry = grid)
+    sfc_polygon_values<- sf::st_sf(ID,random_values, geometry = grid)
     names(sfc_polygon_values) <- c("ID","value","geometry")
     if(i==0){
       name <- paste(date,"_","0",i,"01.shp",sep="")
@@ -44,7 +44,7 @@ make_grid <- function(ymin,ymax,xmin,xmax, pixelSize,Dir, date, values=NULL){
       name <- paste(date,"_",i,"00.shp",sep="")
     }
     # Shapefile export
-    st_write(sfc_polygon_values, paste(Dir,name,sep=""))
+    sf::st_write(sfc_polygon_values, paste(Dir,name,sep=""))
     }
     
   }

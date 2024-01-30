@@ -83,10 +83,10 @@ total_exposure <- function (travel_list, mode, dir,key,selection,output_exp,
     
     ## ------- Destination concentrations
     df_concentractions <- rbind(data_origin,data_destination)
-    df_concentractions <- sf::st_as_sf(df_concentractions, coords = c("long", "lat"), crs = 4326)
+    df_concentractions <- st_as_sf(df_concentractions, coords = c("long", "lat"), crs = 4326)
     dir_point <- paste (dir,"/temp/",sep="")
     name_point <- paste(dir_point ,"temp_point.shp",sep="")
-    sf::st_write(df_concentractions,dir_point,"temp_point", driver="ESRI Shapefile", quiet = TRUE)
+    st_write(df_concentractions,paste(dir_point,"temp_point.shp",sep = ""), driver="ESRI Shapefile", quiet = TRUE)
     
     point <- st_read(name_point,quiet = TRUE)
     # Function that looks for the grids of the hours of interest

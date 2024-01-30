@@ -16,7 +16,7 @@ hour_trajectory <- "2019-08-01 15:50:00 -03"
 Sys.setenv(TZ = "America/Argentina/Buenos_Aires")
 
 # 06. TomTom key
-key <- xxxx
+#key <- xxxx
 
 # Run example
 test <- trajectories_tomtom(origin, dest, mode, hour_trajectory, key)

@@ -22,30 +22,34 @@ alternative_trajectories <- function(origin,dest,mode,dir,key,output,hour = NULL
     destination <- dest
     departureTime <- dat_agrupado[[x]][["departureTime"]][1]
     arrivalTime<- dat_agrupado[[x]][["arrivalTime"]][1]
-    lengthInMeters<- dat_agrupado[[x]][["lengthInMeters"]][1]
-    trafficLengthInMeters <- dat_agrupado[[x]][["trafficLengthInMeters"]][1]
+    lengthInKM<- dat_agrupado[[x]][["lengthInKM"]][1]
+    #trafficLengthInKM <- dat_agrupado[[x]][["trafficLengthInKM"]][1]
     travelMode <- dat_agrupado[[x]][["travelMode"]][1]
-    trafficDelayInSeconds<-  dat_agrupado[[x]][["trafficDelayInSeconds"]][1]
-    travelTimeInSeconds<- dat_agrupado[[x]][["travelTimeInSeconds"]][1]
-    liveTrafficIncidentsTravelTimeInSeconds<- dat_agrupado[[x]][["liveTrafficIncidentsTravelTimeInSeconds"]][1]
-    historicTrafficTravelTimeInSeconds <- dat_agrupado[[x]][["historicTrafficTravelTimeInSeconds"]][1]
-    noTrafficTravelTimeInSeconds<- dat_agrupado[[x]][["noTrafficTravelTimeInSeconds"]][1]
+    #trafficDelayInMinutes<-  dat_agrupado[[x]][["trafficDelayInMinutes"]][1]
+    travelTimeInMinutes<- dat_agrupado[[x]][["travelTimeInMinutes"]][1]
+    #liveTrafficIncidentsTravelTimeInMinutes<- dat_agrupado[[x]][["liveTrafficIncidentsTravelTimeInMinutes"]][1]
+    #historicTrafficTravelTimeInMinutes <- dat_agrupado[[x]][["historicTrafficTravelTimeInMinutes"]][1]
+    #noTrafficTravelTimeInMinutes<- dat_agrupado[[x]][["noTrafficTravelTimeInMinutes"]][1]
     alternative<- dat_agrupado[[x]][["alternative"]][1]
     data_frame_1 <- data.frame( origin,destination ,departureTime, 
-                                arrivalTime, lengthInMeters, 
-                                trafficLengthInMeters,travelMode, 
-                                trafficDelayInSeconds,travelTimeInSeconds ,                   
-                                liveTrafficIncidentsTravelTimeInSeconds,
-                                historicTrafficTravelTimeInSeconds,
-                                noTrafficTravelTimeInSeconds,           
+                                arrivalTime, lengthInKM, 
+                                #trafficLengthInKM,
+                                travelMode, 
+                                #trafficDelayInMinutes,
+                                travelTimeInMinutes ,                   
+                                #liveTrafficIncidentsTravelTimeInMinutes,
+                                #historicTrafficTravelTimeInMinutes,
+                                #noTrafficTravelTimeInMinutes,           
                                 alternative)
     names (data_frame_1)<- c( "origin","destination" ,"departureTime", 
-                              "arrivalTime", "lengthInMeters", 
-                              "trafficLengthInMeters","travelMode", 
-                              "trafficDelayInSeconds","travelTimeInSeconds",                   
-                              "liveTrafficIncidentsTravelTimeInSeconds",
-                              "historicTrafficTravelTimeInSeconds",
-                              "noTrafficTravelTimeInSeconds",           
+                              "arrivalTime", "lengthInKM", 
+                              #"trafficlengthInKM",
+                              "travelMode", 
+                              #"trafficDelayInMinutes",
+                              "travelTimeInMinutes",                   
+                              #"liveTrafficIncidentstravelTimeInMinutes",
+                              #"historicTraffictravelTimeInMinutes",
+                              #"noTraffictravelTimeInMinutes",           
                               "alternative")
     
     id_df <- rbind(id_df,data_frame_1)
@@ -81,13 +85,13 @@ alternative_trajectories <- function(origin,dest,mode,dir,key,output,hour = NULL
     df_merge <- merge(trajectory,sum_df, 
                       by = "alternative")
     trajectory<- df_merge
-    trajectory$exposure_value_mean <- round(((trajectory$daily_pol_value_mean * trajectory$liveTrafficIncidentsTravelTimeInSeconds)/60),2)
+    trajectory$exposure_value_mean <- round(((trajectory$daily_pol_value_mean * trajectory$travelTimeInMinutes)/60),2)
 
     # ------------ 01. FASTER ROUTE
-    faster_route <- trajectory[trajectory$historicTrafficTravelTimeInSeconds == min(trajectory$historicTrafficTravelTimeInSeconds),]
+    faster_route <- trajectory[trajectory$travelTimeInMinutes == min(trajectory$travelTimeInMinutes),]
     faster_route$type <- "fast" 
     # ------------ 02. SHORTER ROUTE
-    shorter_route <- trajectory[trajectory$lengthInMeters == min(trajectory$lengthInMeters),]
+    shorter_route <- trajectory[trajectory$lengthInKM == min(trajectory$lengthInKM),]
     shorter_route$type <- "short"
     # ------------ 03. LESS CONTAMINATED ROUTE
     less_polluted_route<- trajectory[trajectory$daily_pol_value_mean == min(trajectory$daily_pol_value_mean),]
@@ -167,42 +171,42 @@ alternative_trajectories <- function(origin,dest,mode,dir,key,output,hour = NULL
     #  --- Plot content
       content_more_cont <- paste(sep = "<br/>",
                                 paste0("<center><b>More polluted route: </b></center>"),
-                                paste0("<b>Duration: </b>", more_polluted_route$travelTimeInSeconds," min"),
-                                paste0("<b>Distance: </b>", more_polluted_route$lengthInMeters," km"),
+                                paste0("<b>Duration: </b>", more_polluted_route$travelTimeInMinutes," min"),
+                                paste0("<b>Distance: </b>", more_polluted_route$lengthInKM," km"),
                                 paste0("<b>Concentrations: </b>", more_polluted_route$value," ", units),
                                 paste0("<b>Exposure: </b>", more_polluted_route$exposure," ", units,"/h"))
       content_less_cont <- paste(sep = "<br/>",
                                 paste0("<center><b>Less polluted route: </b></center>"),
-                                paste0("<b>Duration: </b>", less_polluted_route$travelTimeInSeconds," min"),
-                                paste0("<b>Distance: </b>", less_polluted_route$lengthInMeters," km"),
+                                paste0("<b>Duration: </b>", less_polluted_route$travelTimeInMinutes," min"),
+                                paste0("<b>Distance: </b>", less_polluted_route$lengthInKM," km"),
                                 paste0("<b>Concentrations: </b>", less_polluted_route$value," ", units),
                                 paste0("<b>Exposure: </b>", less_polluted_route$exposure," ", units,"/h"))
       content_short <- paste(sep = "<br/>",
                                 paste0("<center><b>Shorter route: </b></center>"),
-                                paste0("<b>Duration: </b>",shorter_route$travelTimeInSeconds," min"),
-                                paste0("<b>Distance: </b>", shorter_route$lengthInMeters," km"),
+                                paste0("<b>Duration: </b>",shorter_route$travelTimeInMinutes," min"),
+                                paste0("<b>Distance: </b>", shorter_route$lengthInKM," km"),
                              paste0("<b>Concentrations: </b>", shorter_route$value," ", units),
                              paste0("<b>Exposure: </b>", shorter_route$exposure," ", units,"/h"))
       
       content_fast <- paste(sep = "<br/>",
                                 paste0("<center><b>Faster route: </b></center>"),
-                                paste0("<b>Duration: </b>", faster_route$travelTimeInSeconds," min"),
-                                paste0("<b>Distance: </b>", faster_route$lengthInMeters," km"),
+                                paste0("<b>Duration: </b>", faster_route$travelTimeInMinutes," min"),
+                                paste0("<b>Distance: </b>", faster_route$lengthInKM," km"),
                                 paste0("<b>Concentrations: </b>", faster_route$value," ", units),
                                 paste0("<b>Exposure: </b>", faster_route$exposure," ", units,"/h"))
 
       content_less_exp<- paste(sep = "<br/>",
-                              paste0("<center><b>Ruta Less exposure: </b></center>"),
-                              paste0("<b>Duration: </b>", less_exposure_route$travelTimeInSeconds," min"),
-                              paste0("<b>Distance: </b>", less_exposure_route$lengthInMeters," km"),
+                              paste0("<center><b>Less exposure route: </b></center>"),
+                              paste0("<b>Duration: </b>", less_exposure_route$travelTimeInMinutes," min"),
+                              paste0("<b>Distance: </b>", less_exposure_route$lengthInKM," km"),
                               paste0("<b>Concentrations: </b>", less_exposure_route$value," ", units),
                               paste0("<b>Exposure: </b>", less_exposure_route$exposure," ", units,"/h"))
       
       
       content_more_exp <- paste(sep = "<br/>",
                               paste0("<center><b>More exposure route: </b></center>"),
-                              paste0("<b>Duration: </b>", more_exposure_route$travelTimeInSeconds," min"),
-                              paste0("<b>Distance: </b>", more_exposure_route$lengthInMeters," km"),
+                              paste0("<b>Duration: </b>", more_exposure_route$travelTimeInMinutes," min"),
+                              paste0("<b>Distance: </b>", more_exposure_route$lengthInKM," km"),
                               paste0("<b>Concentrations: </b>", more_exposure_route$value," ",units),#" ?g m-3"),
                               paste0("<b>Exposure: </b>", more_exposure_route$exposure," ",units,"/h"))#" ?g m-3/h"))
 
@@ -255,7 +259,7 @@ alternative_trajectories <- function(origin,dest,mode,dir,key,output,hour = NULL
   #################################################################################
   # ------- output POLYLINE
        if (output == "polyline"){
-         df_output <- rbind(faster_route,shorter_route,more_polluted_route,less_polluted_route)
+         df_output <- rbind(faster_route,shorter_route,more_polluted_route,less_polluted_route, more_exposure_route, less_exposure_route)
          
          polyline_output<- points_to_line(data = df_output, 
                                           long = "long", 
@@ -274,39 +278,44 @@ alternative_trajectories <- function(origin,dest,mode,dir,key,output,hour = NULL
            
            departureTime <- group_dat_output[[p]][["departureTime"]][1]
            arrivalTime<- group_dat_output[[p]][["arrivalTime"]][1]
-           lengthInMeters<- group_dat_output[[p]][["lengthInMeters"]][1]
-           trafficLengthInMeters <- group_dat_output[[p]][["trafficLengthInMeters"]][1]
+           lengthInKM<- group_dat_output[[p]][["lengthInKM"]][1]
+           #trafficlengthInKM <- group_dat_output[[p]][["trafficlengthInKM"]][1]
            travelMode <- group_dat_output[[p]][["travelMode"]][1]
-           trafficDelayInSeconds<-  group_dat_output[[p]][["trafficDelayInSeconds"]][1]
-           travelTimeInSeconds<- group_dat_output[[p]][["travelTimeInSeconds"]][1]
-           liveTrafficIncidentsTravelTimeInSeconds<- group_dat_output[[p]][["liveTrafficIncidentsTravelTimeInSeconds"]][1]
-           historicTrafficTravelTimeInSeconds <- group_dat_output[[p]][["historicTrafficTravelTimeInSeconds"]][1]
-           noTrafficTravelTimeInSeconds<- group_dat_output[[p]][["noTrafficTravelTimeInSeconds"]][1]
+           #trafficDelayInMinutes<-  group_dat_output[[p]][["trafficDelayInMinutes"]][1]
+           travelTimeInMinutes<- group_dat_output[[p]][["travelTimeInMinutes"]][1]
+           #liveTrafficIncidentstravelTimeInMinutes<- group_dat_output[[p]][["liveTrafficIncidentstravelTimeInMinutes"]][1]
+           #historicTraffictravelTimeInMinutes <- group_dat_output[[p]][["historicTraffictravelTimeInMinutes"]][1]
+           #noTraffictravelTimeInMinutes<- group_dat_output[[p]][["noTraffictravelTimeInMinutes"]][1]
            alternative<-group_dat_output[[p]][["alternative"]][1]
            type <- group_dat_output[[p]][["type"]][1]
            value <- group_dat_output[[p]][["exposure_value_mean"]][1] #group_dat_output[[p]][["value"]][1]
            
            
            data_frame_output <- data.frame( origin,destination ,departureTime, 
-                                            arrivalTime, lengthInMeters, 
-                                            trafficLengthInMeters,travelMode, 
-                                            trafficDelayInSeconds,travelTimeInSeconds ,                   
-                                            liveTrafficIncidentsTravelTimeInSeconds,
-                                            historicTrafficTravelTimeInSeconds,
-                                            noTrafficTravelTimeInSeconds,           
+                                            arrivalTime, lengthInKM, 
+                                            #trafficlengthInKM,
+                                            travelMode, 
+                                            #trafficDelayInMinutes,
+                                            travelTimeInMinutes ,                   
+                                            #liveTrafficIncidentstravelTimeInMinutes,
+                                            #historicTraffictravelTimeInMinutes,
+                                            #noTraffictravelTimeInMinutes,           
                                             alternative, type, value)
            names (data_frame_output)<- c("origin","destination" ,"departureTime", 
-                                         "arrivalTime", "lengthInMeters", 
-                                         "trafficLengthInMeters","travelMode", 
-                                         "trafficDelayInSeconds","travelTimeInSeconds",                   
-                                         "liveTrafficIncidentsTravelTimeInSeconds",
-                                         "historicTrafficTravelTimeInSeconds",
-                                         "noTrafficTravelTimeInSeconds",           
+                                         "arrivalTime", "lengthInKM", 
+                                         #"trafficlengthInKM",
+                                         "travelMode", 
+                                         #"trafficDelayInMinutes",
+                                         "travelTimeInMinutes",                   
+                                         #"liveTrafficIncidentstravelTimeInMinutes",
+                                         #"historicTraffictravelTimeInMinutes",
+                                         #"noTraffictravelTimeInMinutes",           
                                          "alternative","type","value")
            
            id_df_output <- rbind(id_df_output,data_frame_output)
          }
-         df2_output <- dplyr::left_join(polyline_output, id_df_output, by = "alternative")
+         polyline_output$type <- polyline_output$alternative
+         df2_output <- dplyr::left_join(polyline_output, id_df_output, by = "type")
        }
     file.remove(file.path("./temp", dir(path="./temp" ,pattern="temp.*")))
     return(df2_output)
