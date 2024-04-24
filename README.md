@@ -6,6 +6,6 @@ sulfur dioxide (SO2) due to their potential health impacts. Additionally, a mode
 both methodologies and identify more realistic ways to estimate exposure and understand potential health effects.
 
 - The folder 'Model' has the necessary scripts to estimate exposure. All functions must be run at the same time for it to work correctly.
-- The folder 'explameexcript' has example scripts of the most important functions to calculate exposure.
+- The folder 'Example script' has example scripts of the most important functions to calculate exposure.
 - The folder 'Data' contains example datasets in shapefile format to test the exposure function. These files contain information on hourly concentrations of PM2.5 in the Metropolitan Area of Mendoza, Argentina.
-- The folder 'output' shows examples of outputs from some of the displayed functions.
+- The folder 'Output' shows examples of outputs from some of the displayed functions.
